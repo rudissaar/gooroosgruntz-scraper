@@ -7,6 +7,8 @@ import os
 from shutil import copyfile
 
 class GooroogruntzScraperConfig:
+    _config = dict()
+
     def __init__(self):
         self._container = os.path.dirname(os.path.realpath(__file__))
 
@@ -21,4 +23,16 @@ class GooroogruntzScraperConfig:
         with open(self._config_path, 'r') as file_handle:
             data = json.load(file_handle)
 
-        print(data)
+        if 'battlez_url' in data:
+            self._config['battlez_url'] = data['battlez_url']
+
+        if 'questz_url' in data:
+            self._config['questz_url'] = data['questz_url']
+
+    @property
+    def battlez_url(self):
+        return self._config['battlez_url']
+
+    @property
+    def questz_url(self):
+        return self._config['questz_url']

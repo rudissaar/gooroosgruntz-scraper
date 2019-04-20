@@ -18,3 +18,15 @@ class GooroogruntzScraper:
     def run(self):
         if not self._tasks:
             self._tasks = ['battlez', 'questz']
+
+        if 'battlez' in self._tasks:
+            self.scrape_battlez()
+
+        if 'questz' in self._tasks:
+            self.scrape_questz()
+            
+    def scrape_battlez(self):
+        print(self._config.battlez_url)
+
+    def scrape_questz(self):
+        print(self._config.questz_url)
