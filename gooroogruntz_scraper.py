@@ -32,11 +32,12 @@ class GooroogruntzScraper:
         if 'questz' in self._tasks:
             self.scrape_questz()
 
-    def scrape_battlez(self):
-        urls = list()        
+    def scrape_battlez(self, url=None):
+        if url is None:
+            url = self._config.battlez_url
 
         try:
-            html = urlopen(self._config.battlez_url)
+            html = urlopen(url)
             soup = BeautifulSoup(html.read(), 'html.parser')
         except HTTPError as err:
             print(err)
@@ -45,20 +46,22 @@ class GooroogruntzScraper:
             print(err)
             return
 
-        urls.append(self._config.battlez_url)
+        print(url)
 
         pagination = soup.find('ul', {'class': ['ui-pagination']})
-        pages = pagination.findChildren('li')
+        next_page = pagination.findChild('li', {'class': 'next'})
+        
+        if next_page:
+            link = next_page.findChild('a', href=True)
 
-        for page in pages:
-            try:
-                if 'next' in page['class']:
-                    link = page.findChild('a', href=True)
-
-                    if link:
-                        print(link['href'])
-            except KeyError:
-                continue
+            if link:
+                self.scrape_battlez(self.get_domain(self._config.battlez_url) + link['href'])
+        
 
     def scrape_questz(self):
         print(self._config.questz_url)
+
+    @staticmethod
+    def get_domain(url):
+        parts = urlparse(url)
+        return (parts.scheme + '://'+ parts.netloc)
