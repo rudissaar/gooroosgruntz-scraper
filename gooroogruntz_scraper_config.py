@@ -23,16 +23,20 @@ class GooroogruntzScraperConfig:
         with open(self._config_path, 'r') as file_handle:
             data = json.load(file_handle)
 
-        if 'battlez_url' in data:
-            self._config['battlez_url'] = data['battlez_url']
+        try:
+            self._config['battlez_url'] = data['battlez']['url']
+        except KeyError:
+            self._config['battlez_url'] = None
 
-        if 'questz_url' in data:
-            self._config['questz_url'] = data['questz_url']
+        try:
+            self._config['questz_urls'] = data['questz']['urls']
+        except KeyError:
+            self._config['questz_urls'] = None
 
     @property
     def battlez_url(self):
         return self._config['battlez_url']
 
     @property
-    def questz_url(self):
-        return self._config['questz_url']
+    def questz_urls(self):
+        return self._config['questz_urls']

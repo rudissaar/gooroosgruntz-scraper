@@ -1,4 +1,17 @@
 {
-    "battlez_url": "http://gooroosgruntz.proboards.com/board/3"
+    "battlez": {
+        "url": "http://gooroosgruntz.proboards.com/board/3"
+    },
+    "questz": {
+        "urls": [
+            "http://gooroosgruntz.proboards.com/board/5",
+            "http://gooroosgruntz.proboards.com/board/6",
+            "http://gooroosgruntz.proboards.com/board/7",
+            "http://gooroosgruntz.proboards.com/board/8",
+            "http://gooroosgruntz.proboards.com/board/9",
+            "http://gooroosgruntz.proboards.com/board/10",
+            "http://gooroosgruntz.proboards.com/board/11",
+            "http://gooroosgruntz.proboards.com/board/12",
+        ]
+    }
 }
-

@@ -59,7 +59,7 @@ class GooroogruntzScraper:
         
 
     def scrape_questz(self):
-        print(self._config.questz_url)
+        print(self._config.questz_urls)
 
     @staticmethod
     def get_domain(url):
