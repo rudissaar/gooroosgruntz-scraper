@@ -31,7 +31,7 @@ class GooroogruntzScraper:
         if 'battlez' in self._tasks:
             self.paginate_battlez()
             self.spider_battlez()
-            print(len(self._urls))
+            self.scrape_battlez()
 
         if 'questz' in self._tasks:
             self.scrape_questz()
@@ -40,18 +40,9 @@ class GooroogruntzScraper:
         if page is None:
             page = self._config.battlez_url
 
-        try:
-            html = urlopen(page)
-            soup = BeautifulSoup(html.read(), 'html.parser')
-        except HTTPError as err:
-            print(err)
-            return
-        except URLError as err:
-            print(err)
-            return
-
         self._pages.append(page)
 
+        soup = self.get_soup(page)
         pagination = soup.find('ul', {'class': ['ui-pagination']})
         next_page = pagination.findChild('li', {'class': 'next'})
         
@@ -63,16 +54,7 @@ class GooroogruntzScraper:
 
     def spider_battlez(self):
         for page in self._pages:
-            try:
-                html = urlopen(page)
-                soup = BeautifulSoup(html.read(), 'html.parser')
-            except HTTPError as err:
-                print(err)
-                return
-            except URLError as err:
-                print(err)
-                return
-
+            soup = self.get_soup(page)
             domain = self.get_domain(page)
             elements = soup.findAll('tr', {'class': ['item', 'thread']})
 
@@ -83,6 +65,15 @@ class GooroogruntzScraper:
                 link = element.findChild('a', {'class': 'thread-link'})
                 self._urls.append(domain + link['href'])
 
+    def scrape_battlez(self):
+        for url in self._urls:
+            soup = self.get_soup(url)
+            buttons = soup.findAll('img', {'src': re.compile('Download.gif$', re.I)})
+
+            for button in buttons:
+                if button.parent.name == 'a':
+                    print(button.parent['href'])
+
     def scrape_questz(self):
         print(self._config.questz_urls)
 
@@ -90,3 +81,17 @@ class GooroogruntzScraper:
     def get_domain(url):
         parts = urlparse(url)
         return (parts.scheme + '://'+ parts.netloc)
+
+    @staticmethod
+    def get_soup(url):
+        try:
+            html = urlopen(url)
+            soup = BeautifulSoup(html.read(), 'html.parser')
+        except HTTPError as err:
+            print(err)
+            return None
+        except URLError as err:
+            print(err)
+            return None
+        else:
+            return soup
