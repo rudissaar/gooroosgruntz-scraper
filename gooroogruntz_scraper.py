@@ -14,6 +14,8 @@ from gooroogruntz_scraper_config import GooroogruntzScraperConfig
 
 class GooroogruntzScraper:
     _tasks = list()
+    _pages = list()
+    _urls = list()
 
     def __init__(self):
         self._container = os.path.dirname(os.path.realpath(__file__))
@@ -27,17 +29,19 @@ class GooroogruntzScraper:
             self._tasks = ['battlez', 'questz']
 
         if 'battlez' in self._tasks:
-            self.scrape_battlez()
+            self.paginate_battlez()
+            self.spider_battlez()
+            print(len(self._urls))
 
         if 'questz' in self._tasks:
             self.scrape_questz()
 
-    def scrape_battlez(self, url=None):
-        if url is None:
-            url = self._config.battlez_url
+    def paginate_battlez(self, page=None):
+        if page is None:
+            page = self._config.battlez_url
 
         try:
-            html = urlopen(url)
+            html = urlopen(page)
             soup = BeautifulSoup(html.read(), 'html.parser')
         except HTTPError as err:
             print(err)
@@ -46,7 +50,7 @@ class GooroogruntzScraper:
             print(err)
             return
 
-        print(url)
+        self._pages.append(page)
 
         pagination = soup.find('ul', {'class': ['ui-pagination']})
         next_page = pagination.findChild('li', {'class': 'next'})
@@ -55,8 +59,29 @@ class GooroogruntzScraper:
             link = next_page.findChild('a', href=True)
 
             if link:
-                self.scrape_battlez(self.get_domain(self._config.battlez_url) + link['href'])
-        
+                self.paginate_battlez(self.get_domain(self._config.battlez_url) + link['href'])
+
+    def spider_battlez(self):
+        for page in self._pages:
+            try:
+                html = urlopen(page)
+                soup = BeautifulSoup(html.read(), 'html.parser')
+            except HTTPError as err:
+                print(err)
+                return
+            except URLError as err:
+                print(err)
+                return
+
+            domain = self.get_domain(page)
+            elements = soup.findAll('tr', {'class': ['item', 'thread']})
+
+            for element in elements:
+                if 'announcement' in element['class']:
+                    continue
+
+                link = element.findChild('a', {'class': 'thread-link'})
+                self._urls.append(domain + link['href'])
 
     def scrape_questz(self):
         print(self._config.questz_urls)
