@@ -21,6 +21,9 @@ class GooroogruntzScraper:
         self._container = os.path.dirname(os.path.realpath(__file__))
         self._config = GooroogruntzScraperConfig()
 
+        if not os.path.exists(self._container + '/loot'):
+            os.mkdir(self._container + '/loot', 0o700)
+
     def add_task(self, task):
         self._tasks.append(task)
 
@@ -32,6 +35,7 @@ class GooroogruntzScraper:
             self.paginate_battlez()
             self.spider_battlez()
             self.scrape_battlez()
+            del self._tasks[0]
 
         if 'questz' in self._tasks:
             self.scrape_questz()
@@ -72,10 +76,21 @@ class GooroogruntzScraper:
 
             for button in buttons:
                 if button.parent.name == 'a':
-                    print(button.parent['href'])
+                    link = button.parent['href']
+                    self.download_file(link)
 
     def scrape_questz(self):
         print(self._config.questz_urls)
+
+    def download_file(self, url):
+        destination_dir = self._container + '/loot/' + self._tasks[0]
+
+        if not os.path.exists(destination_dir):
+            os.mkdir(destination_dir, 0o700)
+
+        parts = urlparse(url)
+        destination_name = destination_dir + '/' + os.path.basename(parts.path)
+        urlretrieve(url, destination_name)
 
     @staticmethod
     def get_domain(url):

@@ -108,4 +108,4 @@ venv.bak/
 
 # Project specific
 config.json
-
+/loot
