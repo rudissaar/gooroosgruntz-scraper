@@ -42,7 +42,7 @@ class GooroogruntzScraper:
 
     def paginate_battlez(self, page=None):
         if page is None:
-            page = self._config.battlez_url
+            page = self._config.battlez_urls[0]
 
         self._pages.append(page)
 
@@ -54,7 +54,7 @@ class GooroogruntzScraper:
             link = next_page.findChild('a', href=True)
 
             if link:
-                self.paginate_battlez(self.get_domain(self._config.battlez_url) + link['href'])
+                self.paginate_battlez(self.get_domain(page) + link['href'])
 
     def spider_battlez(self):
         for page in self._pages:

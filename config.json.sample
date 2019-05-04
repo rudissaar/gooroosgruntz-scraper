@@ -1,6 +1,8 @@
 {
     "battlez": {
-        "url": "http://gooroosgruntz.proboards.com/board/3"
+        "urls": [
+            "http://gooroosgruntz.proboards.com/board/3"
+        ]
     },
     "questz": {
         "urls": [

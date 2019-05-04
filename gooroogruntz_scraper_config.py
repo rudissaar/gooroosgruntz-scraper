@@ -24,9 +24,9 @@ class GooroogruntzScraperConfig:
             data = json.load(file_handle)
 
         try:
-            self._config['battlez_url'] = data['battlez']['url']
+            self._config['battlez_urls'] = data['battlez']['urls']
         except KeyError:
-            self._config['battlez_url'] = None
+            self._config['battlez_urls'] = None
 
         try:
             self._config['questz_urls'] = data['questz']['urls']
@@ -34,8 +34,8 @@ class GooroogruntzScraperConfig:
             self._config['questz_urls'] = None
 
     @property
-    def battlez_url(self):
-        return self._config['battlez_url']
+    def battlez_urls(self):
+        return self._config['battlez_urls']
 
     @property
     def questz_urls(self):
