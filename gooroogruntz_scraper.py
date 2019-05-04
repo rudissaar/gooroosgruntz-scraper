@@ -3,6 +3,7 @@
 
 import os
 import re
+import shutil
 
 from urllib.request import urlopen, urlretrieve
 from bs4 import BeautifulSoup
@@ -20,6 +21,11 @@ class GooroogruntzScraper:
     def __init__(self):
         self._container = os.path.dirname(os.path.realpath(__file__))
         self._config = GooroogruntzScraperConfig()
+
+        if os.path.exists(self._container + '/tmp'):
+            shutil.rmtree(self._container + '/tmp')
+
+        os.mkdir(self._container + '/tmp', 0o700)
 
         if not os.path.exists(self._container + '/loot'):
             os.mkdir(self._container + '/loot', 0o700)
@@ -83,7 +89,7 @@ class GooroogruntzScraper:
         print(self._config.questz_urls)
 
     def download_file(self, url):
-        destination_dir = self._container + '/loot/' + self._tasks[0]
+        destination_dir = self._container + '/tmp/' + self._tasks[0]
 
         if not os.path.exists(destination_dir):
             os.mkdir(destination_dir, 0o700)
