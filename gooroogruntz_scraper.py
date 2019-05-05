@@ -4,6 +4,7 @@
 import os
 import re
 import shutil
+import zipfile
 
 from urllib.request import urlopen, urlretrieve
 from bs4 import BeautifulSoup
@@ -41,6 +42,7 @@ class GooroogruntzScraper:
             self.paginate_battlez()
             self.spider_battlez()
             self.scrape_battlez()
+            self.package_battlez()
             del self._tasks[0]
 
         if 'questz' in self._tasks:
@@ -84,6 +86,13 @@ class GooroogruntzScraper:
                 if button.parent.name == 'a':
                     link = button.parent['href']
                     self.download_file(link)
+
+    def package_battlez(self):
+        zip = zipfile.ZipFile(self._container + '/loot/gruntz-' + self._tasks[0] + '.zip', 'w', zipfile.ZIP_DEFLATED)
+
+        for root, _, files in os.walk(self._container + '/tmp/' + self._tasks[0]):
+            for file in files:
+                zip.write(os.path.join(root, file), file)
 
     def scrape_questz(self):
         print(self._config.questz_urls)
