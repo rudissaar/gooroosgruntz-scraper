@@ -35,27 +35,25 @@ class GooroogruntzScraper:
         if task not in self._tasks:
             self._tasks.append(task)
 
-    def remove_task(self, task):
-        if task in self._tasks:
-            self._tasks.remove(task)
+    def process_task(self, task):
+        self._pages.clear()
+        self._urls.clear()
+
+        self.paginate(task)
+        self.spider(task)
+        self.scrape(task)
+        self.package(task)
 
     def run(self):
         if not self._tasks:
             self._tasks = ['battlez', 'questz']
 
-        if 'battlez' in self._tasks:
-            self.paginate_battlez()
-            self.spider_battlez()
-            self.scrape_battlez()
-            self.package_battlez()
-            self.remove_task('battlez')
+        for task in self._tasks:
+            self.process_task(task)
 
-        if 'questz' in self._tasks:
-            self.scrape_questz()
-
-    def paginate_battlez(self, page=None):
+    def paginate(self, task, page=None):
         if page is None:
-            page = self._config.battlez_urls[0]
+            page = getattr(self._config, task + '_urls')[0]
 
         self._pages.append(page)
 
@@ -67,9 +65,9 @@ class GooroogruntzScraper:
             link = next_page.findChild('a', href=True)
 
             if link:
-                self.paginate_battlez(self.get_domain(page) + link['href'])
+                self.paginate(task, self.get_domain(page) + link['href'])
 
-    def spider_battlez(self):
+    def spider(self, task):
         for page in self._pages:
             soup = self.get_soup(page)
             domain = self.get_domain(page)
@@ -82,7 +80,7 @@ class GooroogruntzScraper:
                 link = element.findChild('a', {'class': 'thread-link'})
                 self._urls.append(domain + link['href'])
 
-    def scrape_battlez(self):
+    def scrape(self, task):
         for url in self._urls:
             soup = self.get_soup(url)
             buttons = soup.findAll('img', {'src': re.compile('Download.gif$', re.I)})
@@ -90,29 +88,26 @@ class GooroogruntzScraper:
             for button in buttons:
                 if button.parent.name == 'a':
                     link = button.parent['href']
-                    self.download_file(link)
+                    self.download_file(task, link)
 
-    def package_battlez(self):
-        zip_path = self._container + '/loot/gruntz-' + self.current_task + '.zip'
+    def package(self, task):
+        zip_path = self._container + '/loot/gruntz-' + task + '.zip'
         amount = 0
 
         zip = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
 
-        for root, _, files in os.walk(self._container + '/tmp/' + self.current_task):
+        for root, _, files in os.walk(self._container + '/tmp/' + task):
             for file in files:
                 zip.write(os.path.join(root, file), file)
                 amount += 1
 
         if amount:
-            os.rename(zip_path, self._container + '/loot/gruntz-' + self.current_task + '-' + str(amount) + '.zip')
+            os.rename(zip_path, self._container + '/loot/gruntz-' + task + '-' + str(amount) + '.zip')
         else:
             os.remove(zip_path)
 
-    def scrape_questz(self):
-        print(self._config.questz_urls)
-
-    def download_file(self, url):
-        destination_dir = self._container + '/tmp/' + self.current_task
+    def download_file(self, task, url):
+        destination_dir = self._container + '/tmp/' + task
 
         if not os.path.exists(destination_dir):
             os.mkdir(destination_dir, 0o700)
@@ -120,12 +115,6 @@ class GooroogruntzScraper:
         parts = urlparse(url)
         destination_name = destination_dir + '/' + os.path.basename(parts.path)
         urlretrieve(url, destination_name)
-
-    @property
-    def current_task(self):
-        if self._tasks:
-            return self._tasks[0]
-        return None
 
     @staticmethod
     def get_domain(url):
