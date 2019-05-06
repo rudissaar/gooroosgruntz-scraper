@@ -53,7 +53,7 @@ class GooroogruntzScraper:
 
     def paginate(self, task, page=None):
         if page is None:
-            page = getattr(self._config, task + '_urls')[0]
+            page = getattr(self._config, task + '_urls').pop(0)
 
         self._pages.append(page)
 
@@ -66,6 +66,8 @@ class GooroogruntzScraper:
 
             if link:
                 self.paginate(task, self.get_domain(page) + link['href'])
+            elif not link and getattr(self._config, task + '_urls'):
+                self.paginate(task)
 
     def spider(self, task):
         for page in self._pages:
@@ -88,7 +90,10 @@ class GooroogruntzScraper:
             for button in buttons:
                 if button.parent.name == 'a':
                     link = button.parent['href']
-                    self.download_file(task, link)
+                    pattern = re.compile('wwd$', re.I)
+
+                    if pattern.search(link):
+                        self.download_file(task, link)
 
     def package(self, task):
         zip_path = self._container + '/loot/gruntz-' + task + '.zip'
