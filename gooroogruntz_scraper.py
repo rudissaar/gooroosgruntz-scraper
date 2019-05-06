@@ -90,9 +90,9 @@ class GooroogruntzScraper:
             for button in buttons:
                 if button.parent.name == 'a':
                     link = button.parent['href']
-                    pattern = re.compile('wwd$', re.I)
+                    pattern = re.compile('.wwd$', re.I)
 
-                    if pattern.search(link):
+                    if pattern.search(urlparse(link).path):
                         self.download_file(task, link)
 
     def package(self, task):
@@ -119,7 +119,11 @@ class GooroogruntzScraper:
 
         parts = urlparse(url)
         destination_name = destination_dir + '/' + os.path.basename(parts.path)
-        urlretrieve(url, destination_name)
+
+        try:
+            urlretrieve(url, destination_name)
+        except HTTPError as e:
+            print(e)
 
     @staticmethod
     def get_domain(url):
