@@ -1,15 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""File that contains GooroosgruntzScraperConfig class."""
+
 import json
 import os
 
 from shutil import copyfile
 
 class GooroosgruntzScraperConfig:
+    """Class that reads in configuration from json file and provides extra functionalities."""
+
     _config = dict()
 
     def __init__(self):
+        """Constructor of the GooroosgruntzScraperConfig class."""
+
         self._container = os.path.dirname(os.path.realpath(__file__))
 
         if not self._container.endswith('/'):
@@ -35,8 +41,12 @@ class GooroosgruntzScraperConfig:
 
     @property
     def battlez_urls(self):
+        """Getter for battlez_urls property."""
+
         return self._config['battlez_urls']
 
     @property
     def questz_urls(self):
+        """Getter for questz_urls property."""
+
         return self._config['questz_urls']
