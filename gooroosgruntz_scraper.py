@@ -14,9 +14,9 @@ from urllib.error import URLError
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 
-from gooroogruntz_scraper_config import GooroogruntzScraperConfig
+from gooroosgruntz_scraper_config import GooroosgruntzScraperConfig
 
-class GooroogruntzScraper:
+class GooroosgruntzScraper:
     """Main class that performs scraping process."""
 
     _tasks = list()
@@ -25,7 +25,7 @@ class GooroogruntzScraper:
 
     def __init__(self):
         self._container = os.path.dirname(os.path.realpath(__file__))
-        self._config = GooroogruntzScraperConfig()
+        self._config = GooroosgruntzScraperConfig()
 
         if os.path.exists(self._container + '/tmp'):
             shutil.rmtree(self._container + '/tmp')

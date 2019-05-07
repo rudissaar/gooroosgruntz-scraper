@@ -6,7 +6,7 @@ import os
 
 from shutil import copyfile
 
-class GooroogruntzScraperConfig:
+class GooroosgruntzScraperConfig:
     _config = dict()
 
     def __init__(self):
