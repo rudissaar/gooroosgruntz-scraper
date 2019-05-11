@@ -23,7 +23,9 @@ class GooroosgruntzScraper:
     _pages = list()
     _urls = list()
 
-    def __init__(self):
+    def __init__(self, verbose=False):
+        self._verbose = verbose
+
         self._container = os.path.dirname(os.path.realpath(__file__))
         self._config = GooroosgruntzScraperConfig()
 
@@ -56,7 +58,8 @@ class GooroosgruntzScraper:
         """Method that actually starts the flow."""
 
         if not self._tasks:
-            self._tasks = ['battlez', 'questz']
+            self.add_task('battlez')
+            self.add_task('questz')
 
         for task in self._tasks:
             self.process_task(task)
