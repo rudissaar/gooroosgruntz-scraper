@@ -12,10 +12,12 @@ PARSER = argparse.ArgumentParser()
 PARSER.add_argument('-b', '--battlez', help='scrape for battlez', action='store_true')
 PARSER.add_argument('-q', '--questz', help='scrape for questz', action='store_true')
 PARSER.add_argument('-v', '--verbose', help='make operations talkative', action='store_true')
+PARSER.add_argument('-d', '--debug', help='enable debug messages', action='store_true')
 
 ARGS = PARSER.parse_args()
 VERBOSE = bool(ARGS.verbose)
-SCRAPER = GooroosgruntzScraper(VERBOSE)
+DEBUG = bool(ARGS.debug)
+SCRAPER = GooroosgruntzScraper(VERBOSE, DEBUG)
 
 if ARGS.battlez:
     SCRAPER.add_task('battlez')

@@ -23,8 +23,9 @@ class GooroosgruntzScraper:
     _pages = list()
     _urls = list()
 
-    def __init__(self, verbose=False):
+    def __init__(self, verbose=False, debug=False):
         self._verbose = verbose
+        self._debug = debug
 
         self._container = os.path.dirname(os.path.realpath(__file__))
         self._config = GooroosgruntzScraperConfig()
@@ -72,7 +73,7 @@ class GooroosgruntzScraper:
 
         self._pages.append(page)
 
-        soup = self.get_soup(page)
+        soup = self.get_soup(page, self._debug)
         pagination = soup.find('ul', {'class': ['ui-pagination']})
         next_page = pagination.findChild('li', {'class': 'next'})
 
@@ -88,7 +89,7 @@ class GooroosgruntzScraper:
         """Method that collects urls of individual levels."""
 
         for page in self._pages:
-            soup = self.get_soup(page)
+            soup = self.get_soup(page, self._debug)
             domain = self.get_domain(page)
             elements = soup.findAll('tr', {'class': ['item', 'thread']})
 
@@ -103,7 +104,7 @@ class GooroosgruntzScraper:
         """Method that searches for download links and pulls them down."""
 
         for url in self._urls:
-            soup = self.get_soup(url)
+            soup = self.get_soup(url, self._debug)
             buttons = soup.findAll('img', {'src': re.compile('Download.gif$', re.I)})
 
             for button in buttons:
@@ -154,18 +155,24 @@ class GooroosgruntzScraper:
         """Static method that return domain with scheme from specified url."""
 
         parts = urlparse(url)
-        return parts.scheme + '://'+ parts.netloc
+        return parts.scheme + '://' + parts.netloc
 
     @staticmethod
-    def get_soup(url):
+    def get_soup(url, debug=False):
         """Static method that parses specified url and returns soup handle if possible."""
 
         try:
+            if debug:
+                print('> Getting soup from: ' + url)
             html = urlopen(url)
             soup = BeautifulSoup(html.read(), 'html.parser')
-        except HTTPError:
+        except HTTPError as exception:
+            if debug:
+                print('> Getting soup failed: ' + exception.reason)
             return None
-        except URLError:
+        except URLError as exception:
+            if debug:
+                print('> Getting soup failed: ' + exception.reason)
             return None
         else:
             return soup
