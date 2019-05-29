@@ -3,6 +3,7 @@
 
 """Scraper designed to scrape custom Gruntz levels from http://gooroosgruntz.proboards.com"""
 
+import datetime
 import os
 import re
 import shutil
@@ -37,6 +38,13 @@ class GooroosgruntzScraper:
 
         if not os.path.exists(self._container + '/loot'):
             os.mkdir(self._container + '/loot', 0o700)
+
+        self._date_string = None
+        self._amount = 0
+
+        if self._config.date_based_names:
+            now = datetime.datetime.now()
+            self._date_string = now.strftime('%Y-%m-%d')
 
     def add_task(self, task):
         """Method that adds tasks to scrape, also checks for duplications."""
@@ -73,7 +81,7 @@ class GooroosgruntzScraper:
 
         self._pages.append(page)
 
-        soup = self.get_soup(page, self._debug)
+        soup = self.get_soup(page)
         pagination = soup.find('ul', {'class': ['ui-pagination']})
         next_page = pagination.findChild('li', {'class': 'next'})
 
@@ -89,7 +97,7 @@ class GooroosgruntzScraper:
         """Method that collects urls of individual levels."""
 
         for page in self._pages:
-            soup = self.get_soup(page, self._debug)
+            soup = self.get_soup(page)
             domain = self.get_domain(page)
             elements = soup.findAll('tr', {'class': ['item', 'thread']})
 
@@ -104,7 +112,7 @@ class GooroosgruntzScraper:
         """Method that searches for download links and pulls them down."""
 
         for url in self._urls:
-            soup = self.get_soup(url, self._debug)
+            soup = self.get_soup(url)
             buttons = soup.findAll('img', {'src': re.compile('Download.gif$', re.I)})
 
             for button in buttons:
@@ -118,20 +126,26 @@ class GooroosgruntzScraper:
     def package(self, task):
         """Method that creates archive from levels that just got pulled down."""
 
-        zip_path = self._container + '/loot/gruntz-' + task + '.zip'
-        amount = 0
+        zip_path = self._container + '/loot/gruntz-' + task
+        zip_path += '-' + self._date_string if self._config.date_based_names else ''
+        zip_path += '.zip'
 
         zip_handle = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
+        self._amount = 0
 
         for root, _, files in os.walk(self._container + '/tmp/' + task):
             for file in files:
                 zip_handle.write(os.path.join(root, file), file)
-                amount += 1
+                self._amount += 1
 
-        if amount:
-            new_zip_path = self._container + '/loot/gruntz-' + task + '-' + str(amount) + '.zip'
+        if not self._config.date_based_names and self._amount:
+            new_zip_path = self._container + '/loot/gruntz-'
+            new_zip_path += task + '-' + str(self._amount) + '.zip'
+
             os.rename(zip_path, new_zip_path)
-        else:
+        elif not self._config.date_based_names and not self._amount:
+            os.remove(zip_path)
+        elif self._config.date_based_names and not self._amount:
             os.remove(zip_path)
 
     def download_file(self, task, url):
@@ -150,29 +164,28 @@ class GooroosgruntzScraper:
         except HTTPError:
             pass
 
+    def get_soup(self, url):
+        """Method that parses specified url and returns soup handle if possible."""
+
+        try:
+            if self._debug:
+                print('> Getting soup from: ' + url)
+            html = urlopen(url)
+            soup = BeautifulSoup(html.read(), 'html.parser')
+        except HTTPError as exception:
+            if self._debug:
+                print('> Getting soup failed: ' + exception.reason)
+            return None
+        except URLError as exception:
+            if self._debug:
+                print('> Getting soup failed: ' + exception.reason)
+            return None
+        else:
+            return soup
+
     @staticmethod
     def get_domain(url):
         """Static method that return domain with scheme from specified url."""
 
         parts = urlparse(url)
         return parts.scheme + '://' + parts.netloc
-
-    @staticmethod
-    def get_soup(url, debug=False):
-        """Static method that parses specified url and returns soup handle if possible."""
-
-        try:
-            if debug:
-                print('> Getting soup from: ' + url)
-            html = urlopen(url)
-            soup = BeautifulSoup(html.read(), 'html.parser')
-        except HTTPError as exception:
-            if debug:
-                print('> Getting soup failed: ' + exception.reason)
-            return None
-        except URLError as exception:
-            if debug:
-                print('> Getting soup failed: ' + exception.reason)
-            return None
-        else:
-            return soup

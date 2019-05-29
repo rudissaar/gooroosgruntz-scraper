@@ -30,6 +30,11 @@ class GooroosgruntzScraperConfig:
             data = json.load(file_handle)
 
         try:
+            self._config['date_based_names'] = data['date_based_names']
+        except KeyError:
+            self._config['date_based_names'] = False
+
+        try:
             self._config['battlez_urls'] = data['battlez']['urls']
         except KeyError:
             self._config['battlez_urls'] = None
@@ -38,6 +43,12 @@ class GooroosgruntzScraperConfig:
             self._config['questz_urls'] = data['questz']['urls']
         except KeyError:
             self._config['questz_urls'] = None
+
+    @property
+    def date_based_names(self):
+        """Getter for date_based_names property."""
+
+        return self._config['date_based_names']
 
     @property
     def battlez_urls(self):
