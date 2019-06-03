@@ -44,6 +44,11 @@ class GooroosgruntzScraperConfig:
         except KeyError:
             self._config['questz_urls'] = None
 
+        try:
+            self._config['user_agent'] = data['user_agent']
+        except KeyError:
+            self._config['user_agent'] = None
+
     @property
     def date_based_names(self):
         """Getter for date_based_names property."""
@@ -61,3 +66,9 @@ class GooroosgruntzScraperConfig:
         """Getter for questz_urls property."""
 
         return self._config['questz_urls']
+
+    @property
+    def user_agent(self):
+        """Getter for user_agnet property."""
+
+        return self._config['user_agent']

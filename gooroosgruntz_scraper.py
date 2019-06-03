@@ -9,7 +9,7 @@ import re
 import shutil
 import zipfile
 
-from urllib.request import urlopen, urlretrieve
+from urllib.request import urlopen, urlretrieve, build_opener, install_opener
 from urllib.error import HTTPError
 from urllib.error import URLError
 from urllib.parse import urlparse
@@ -45,6 +45,11 @@ class GooroosgruntzScraper:
         if self._config.date_based_names:
             now = datetime.datetime.now()
             self._date_string = now.strftime('%Y-%m-%d')
+
+        if self._config.user_agent:
+            opener = build_opener()
+            opener.addheaders = [('User-Agent', self._config.user_agent)]
+            install_opener(opener)
 
     def add_task(self, task):
         """Method that adds tasks to scrape, also checks for duplications."""
