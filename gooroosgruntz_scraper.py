@@ -164,6 +164,9 @@ class GooroosgruntzScraper:
         parts = urlparse(url)
         destination_name = destination_dir + '/' + os.path.basename(parts.path)
 
+        if self._verbose or self._debug:
+            print('> Downloading: ' + url)
+
         try:
             urlretrieve(url, destination_name)
         except HTTPError:
