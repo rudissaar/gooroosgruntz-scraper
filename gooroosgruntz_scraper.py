@@ -34,10 +34,16 @@ class GooroosgruntzScraper:
         if os.path.exists(self._container + '/tmp'):
             shutil.rmtree(self._container + '/tmp')
 
+            if self._debug:
+                print('> Flushed directory: ' + self._container + '/tmp')
+
         os.mkdir(self._container + '/tmp', 0o700)
 
         if not os.path.exists(self._container + '/loot'):
             os.mkdir(self._container + '/loot', 0o700)
+
+            if self._debug:
+                print('> Created directory: ' + self._container + '/loot')
 
         self._date_string = None
         self._amount = 0
@@ -46,10 +52,16 @@ class GooroosgruntzScraper:
             now = datetime.datetime.now()
             self._date_string = now.strftime('%Y-%m-%d')
 
+            if self._debug:
+                print('> Constructed date string for archives: ' + self._date_string)
+
         if self._config.user_agent:
             opener = build_opener()
             opener.addheaders = [('User-Agent', self._config.user_agent)]
             install_opener(opener)
+
+            if self._debug:
+                print('> Assigned specified user agent to requests: ' + self._config.user_agent)
 
     def add_task(self, task):
         """Method that adds tasks to scrape, also checks for duplications."""
@@ -57,8 +69,13 @@ class GooroosgruntzScraper:
         if task not in self._tasks:
             self._tasks.append(task)
 
+            if self._debug:
+                print('> Added task: ' + task)
+
     def process_task(self, task):
         """Method that handles flushing buffers and triggering subtasks."""
+        if self._debug:
+            print('> Started to process task: ' + task)
 
         self._pages.clear()
         self._urls.clear()

@@ -7,6 +7,8 @@ Scraper designed to scrape custom Gruntz levels from http://gooroosgruntz.proboa
 * Python 3
 * Beautiful Soup 4
 
+## Usage
+
 ```
 usage: run.py [-h] [-b] [-q] [-v] [-d]
 
