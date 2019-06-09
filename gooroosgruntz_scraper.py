@@ -103,6 +103,9 @@ class GooroosgruntzScraper:
 
         self._pages.append(page)
 
+        if self._debug:
+            print('> Scanning page for urls: ' + page)
+
         soup = self.get_soup(page)
         pagination = soup.find('ul', {'class': ['ui-pagination']})
         next_page = pagination.findChild('li', {'class': 'next'})
@@ -134,6 +137,9 @@ class GooroosgruntzScraper:
         """Method that searches for download links and pulls them down."""
 
         for url in self._urls:
+            if self._debug:
+                print('> Searching for download links on: ' + url)
+
             soup = self.get_soup(url)
             buttons = soup.findAll('img', {'src': re.compile('Download.gif$', re.I)})
 
@@ -152,6 +158,9 @@ class GooroosgruntzScraper:
         zip_path += '-' + self._date_string if self._config.date_based_names else ''
         zip_path += '.zip'
 
+        if self._debug:
+            print('> Creating ZIP archive:' + zip_path)
+
         zip_handle = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
         self._amount = 0
 
@@ -165,10 +174,19 @@ class GooroosgruntzScraper:
             new_zip_path += task + '-' + str(self._amount) + '.zip'
 
             os.rename(zip_path, new_zip_path)
+
+            if self._debug:
+                print('> Renamed archive to: ' + new_zip_path)
         elif not self._config.date_based_names and not self._amount:
             os.remove(zip_path)
+
+            if self._debug:
+                print('> Removing empty archive:' + zip_path)
         elif self._config.date_based_names and not self._amount:
             os.remove(zip_path)
+
+            if self._debug:
+                print('> Removing empty archive:' + zip_path)
 
     def download_file(self, task, url):
         """Method that downloads file from specified url."""
