@@ -25,6 +25,8 @@ class GooroosgruntzScraper:
     _urls = list()
 
     def __init__(self, verbose=False, debug=False):
+        """Constructor of the GooroosgruntzScraper class."""
+
         self._verbose = verbose
         self._debug = debug
 
@@ -74,6 +76,7 @@ class GooroosgruntzScraper:
 
     def process_task(self, task):
         """Method that handles flushing buffers and triggering subtasks."""
+
         if self._debug:
             print('> Started to process task: ' + task)
 
