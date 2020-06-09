@@ -2,20 +2,27 @@
     "date_based_names": false,
     "battlez": {
         "urls": [
-            "http://gooroosgruntz.proboards.com/board/3"
+            "https://gooroosgruntz.proboards.com/board/47",
+            "https://gooroosgruntz.proboards.com/board/48",
+            "https://gooroosgruntz.proboards.com/board/49",
+            "https://gooroosgruntz.proboards.com/board/50",
+            "https://gooroosgruntz.proboards.com/board/51",
+            "https://gooroosgruntz.proboards.com/board/52",
+            "https://gooroosgruntz.proboards.com/board/53",
+            "https://gooroosgruntz.proboards.com/board/54"
         ]
     },
     "questz": {
         "urls": [
-            "http://gooroosgruntz.proboards.com/board/5",
-            "http://gooroosgruntz.proboards.com/board/6",
-            "http://gooroosgruntz.proboards.com/board/7",
-            "http://gooroosgruntz.proboards.com/board/8",
-            "http://gooroosgruntz.proboards.com/board/9",
-            "http://gooroosgruntz.proboards.com/board/10",
-            "http://gooroosgruntz.proboards.com/board/11",
-            "http://gooroosgruntz.proboards.com/board/12"
+            "https://gooroosgruntz.proboards.com/board/5",
+            "https://gooroosgruntz.proboards.com/board/6",
+            "https://gooroosgruntz.proboards.com/board/7",
+            "https://gooroosgruntz.proboards.com/board/8",
+            "https://gooroosgruntz.proboards.com/board/9",
+            "https://gooroosgruntz.proboards.com/board/10",
+            "https://gooroosgruntz.proboards.com/board/11",
+            "https://gooroosgruntz.proboards.com/board/12"
         ]
     },
-    "user_agent": null
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0"
 }
